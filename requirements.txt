@@ -1,0 +1,4 @@
+beautifulsoup4
+allure-pytest
+requests
+pytest
