@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "Ex12.py"
+        "Ex13.py"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true
