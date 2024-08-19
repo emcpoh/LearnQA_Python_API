@@ -1,7 +1,5 @@
 import pytest
 import requests
-from requests import Response
-from lib.assertions import Assertions
 
 
 user_agent_check_url = 'https://playground.learnqa.ru/ajax/api/user_agent_check'

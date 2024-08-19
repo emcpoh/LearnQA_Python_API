@@ -16,7 +16,7 @@ class TestUserAuth(BaseCase):
         
         self.data = {
             'email': 'vinkotov@example.com',
-            'password': '1234'
+            'password': '123'
         }
         login_response = requests.post(login_url, data=self.data)
 

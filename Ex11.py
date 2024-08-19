@@ -1,5 +1,4 @@
 import requests
-from requests import Response
 
 homework_cookie_url = 'https://playground.learnqa.ru/api/homework_cookie'
 
