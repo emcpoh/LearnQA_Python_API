@@ -1,50 +1,50 @@
-import requests
-from lib.assertions import Assertions
+import allure
+from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
+from lib.assertions import Assertions
 
-register_user_url = 'https://playground.learnqa.ru/api/user/'
-login_user_url = f'{register_user_url}login'
-
+@allure.epic('User edit cases')
 class TestUserEdit(BaseCase):
+    @allure.description('This test edit just created user')
     def test_edit_just_created_user(self):
-        # Register
-        register_data = self.prepare_registration_data()
-        register_response = requests.post(register_user_url, data=register_data)
+        with allure.step('User registration'):
+            register_data = self.prepare_registration_data()
+            registration_response = MyRequests.post(MyRequests.user_registration_uri, data=register_data)
 
-        Assertions.assert_code_status(register_response, 200)
-        Assertions.assert_json_has_keys(register_response, 'id')
+            Assertions.assert_code_status(registration_response, 200)
+            Assertions.assert_json_has_keys(registration_response, 'id')
 
         email = register_data['email']
-        first_name = register_data['firstName']
         password = register_data['password']
-        user_id = self.get_json_value(register_response, 'id')
+        first_name = register_data['firstName']
+        user_id = self.get_json_value(registration_response, 'id')
 
-        # Login
-        login_data = {
-            'email': email,
-            'password': password
-        }
+        with allure.step('User login'):
+            login_data = {
+                'email': email,
+                'password': password
+            }
 
-        login_response = requests.post(login_user_url, data=login_data)
+            login_response = MyRequests.post(MyRequests.user_login_uri, data=login_data)
 
-        auth_sid = self.get_cookie(login_response, 'auth_sid')
-        token = self.get_header(login_response, 'x-csrf-token')
+            auth_sid = self.get_cookie(login_response, 'auth_sid')
+            token = self.get_header(login_response, 'x-csrf-token')
 
-        # Edit
-        new_name = 'Changed Name'
-
-        edit_response = requests.put(f'{register_user_url}{user_id}',
-                                      headers={'x-csrf-token': token},
-                                      cookies={'auth_sid': auth_sid},
-                                      data={'firstName': new_name})
+        with allure.step('User edit'):
+            new_name = 'Changed name'
+            user_edit_uri = f'{MyRequests.user_registration_uri}/{user_id}'
+            edit_response = MyRequests.put(user_edit_uri,
+                                    headers={'x-csrf-token': token},
+                                    cookies={'auth_sid': auth_sid},
+                                    data={'firstName': new_name})
+            
+            Assertions.assert_code_status(edit_response, 200)
         
-        Assertions.assert_code_status(edit_response, 200)
-
-        # Get user
-        get_user_response = requests.get(f'{register_user_url}{user_id}',
-                                         headers={'x-csrf-token': token},
-                                         cookies={'auth_sid': auth_sid})
+        with allure.step('User get'):
+            user_get_uri = user_edit_uri
+            get_user_response = MyRequests.get(user_get_uri,
+                                            headers={'x-csrf-token': token},
+                                            cookies={'auth_sid': auth_sid})
+            
+            Assertions.assert_json_value_by_name(get_user_response, 'firstName', new_name, 'Wrong name of the user after edit.')
         
-        Assertions.assert_json_value_by_name(get_user_response, 'firstName', new_name, 
-                                             'Wrong name of the user after edit')
-
