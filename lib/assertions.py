@@ -32,4 +32,20 @@ class Assertions:
             response_as_dict = response.json()
         except json.JSONDecodeError:
             assert False, f'Response is not is JSON format. Response text is {response.text}'
+
         assert name not in response_as_dict, f'Response JSON shouldn\'t have key {name}, but it present in response.'
+
+    @staticmethod
+    def assert_content(response: Response, expected_content):
+        # пропускаем проверку за ненадобностью
+        if expected_content is None:
+            return True
+        try:
+            decoded_content = response.content.decode('utf-8')
+        except UnicodeDecodeError:
+            raise UnicodeEncodeError
+
+        assert decoded_content == expected_content, f"Unexpected response content {response.content}"
+            
+
+
