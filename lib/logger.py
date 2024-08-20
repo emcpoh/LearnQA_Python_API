@@ -3,7 +3,10 @@ from datetime import datetime
 from lib.my_requests import Response
 
 class Logger:
-    file_name: str = f'logs/log_{str(datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))}.log'
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+
+    file_name: str = f'logs/log_{str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))}.log'
 
     @classmethod
     def _write_log_to_file(cls, data: str):
