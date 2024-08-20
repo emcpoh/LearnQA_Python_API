@@ -26,7 +26,6 @@ class TestUserRegister(BaseCase):
         Assertions.assert_code_status(response, 400)
         Assertions.assert_content(response, f"Users with email '{email}' already exists")
 
-    # - Создание пользователя с некорректным email - без символа @
     email = [
         'test',
         'test.ru',
