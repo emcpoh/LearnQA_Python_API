@@ -1,11 +1,13 @@
-import requests
 import pytest
+import allure
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+from lib.my_requests import MyRequests
 
-login_url = 'https://playground.learnqa.ru/api/user/login'
-auth_url = 'https://playground.learnqa.ru/api/user/auth'
+login_endpoint = '/user/login'
+auth_endpoint = '/user/auth'
 
+@allure.epic('Authorization cases')
 class TestUserAuth(BaseCase):
     exclude_params = {
         ('no_cookie'),
@@ -16,19 +18,20 @@ class TestUserAuth(BaseCase):
         
         self.data = {
             'email': 'vinkotov@example.com',
-            'password': '123'
+            'password': '1234'
         }
-        login_response = requests.post(login_url, data=self.data)
+        login_response = MyRequests.post(login_endpoint, data=self.data)
 
         self.auth_sid = self.get_cookie(login_response, 'auth_sid')
         self.token = self.get_header(login_response, 'x-csrf-token')
         self.user_id_from_auth_method = self.get_json_value(login_response, 'user_id')
         self.headers = {'x-csrf-token': self.token}
         self.cookies = {'auth_sid': self.auth_sid}
-        
-    def test_auth_user(self):
 
-        response = requests.get(auth_url, headers=self.headers, cookies=self.cookies)
+    @allure.description('This test successfuly authorize user by email and password')    
+    def test_auth_user(self):
+        
+        response = MyRequests.get(auth_endpoint, headers=self.headers, cookies=self.cookies)
 
         Assertions.assert_json_value_by_name(
             response,
@@ -36,13 +39,14 @@ class TestUserAuth(BaseCase):
             self.user_id_from_auth_method,
             'User id from auth method is not equal to user id from check method'
         )
-
+    
+    @allure.description('This test check authorization status w/o cookies or token')
     @pytest.mark.parametrize('condition', exclude_params)
     def test_negative_auth_check(self, condition):
         if condition == 'no_token':
-            response = requests.get(auth_url, headers=self.headers)
+            response = MyRequests.get(auth_endpoint, headers=self.headers)
         elif condition == 'no_cookie':
-            response = requests.get(auth_url, cookies=self.cookies)
+            response = MyRequests.get(auth_endpoint, cookies=self.cookies)
         else:
             print(f'Unknown condition : {condition}')
 
