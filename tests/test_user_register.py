@@ -1,5 +1,4 @@
 import requests
-from datetime import datetime
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
@@ -7,35 +6,17 @@ from lib.assertions import Assertions
 create_user_url = 'https://playground.learnqa.ru/api/user'
 
 class TestUserRegister(BaseCase):
-    def setup_method(self):
-        base_part = 'learnqa'
-        domain = 'example.com'
-        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
-        self.email = f'{base_part}{random_part}@{domain}'
-
     def test_create_user(self):
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
+        data = self.prepare_registration_data()
 
         response = requests.post(create_user_url, data=data)
         
         Assertions.assert_code_status(response, 200)
-        Assertions.assert_json_has_key(response, 'id')
+        Assertions.assert_json_has_keys(response, 'id')
 
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': email
-        }
+        data = self.prepare_registration_data(email=email)
 
         response = requests.post(create_user_url, data=data)
         Assertions.assert_code_status(response, 400)
