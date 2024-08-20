@@ -2,10 +2,11 @@ import requests
 from requests import Response
 from lib.logger import Logger
 import allure
+from environment import ENV_OBJECT
 
 class MyRequests():
     Response: Response
-    base_url: str = 'https://playground.learnqa.ru/api'
+    base_url: str = ENV_OBJECT.get_base_url()
     user_registration_uri: str = '/user'
     user_login_uri: str = user_registration_uri + '/login'
     user_edit_uri: str
