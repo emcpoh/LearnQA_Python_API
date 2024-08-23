@@ -41,7 +41,7 @@ class TestUserRegister(BaseCase):
         response = MyRequests.post(MyRequests.user_registration_uri, data=data)
 
         Assertions.assert_code_status(response, 400)
-        Assertions.assert_content(response, f"Invalid email format")
+        Assertions.assert_content(response, "Invalid email format")
 
     missed_param = [
         'username',

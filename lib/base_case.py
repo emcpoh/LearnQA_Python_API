@@ -5,7 +5,7 @@ import hashlib
 import random
 
 class BaseCase:
-    def prepare_registration_data(self, email=None, username=None):
+    def prepare_registration_data(self, email=None, username=None, password=None, firstName=None):
         if email is None:
             base_part = 'learnqa'
             domain = 'example.com'
@@ -16,11 +16,18 @@ class BaseCase:
             random_value = str(random.random()).encode('utf-8')
             username = hashlib.md5(random_value).hexdigest()
 
+        if password is None:
+            random_value = str(random.random()).encode('utf-8')
+            password = hashlib.md5(random_value).hexdigest()
         
+        if firstName is None:
+            random_value = str(random.random()).encode('utf-8')
+            firstName = hashlib.md5(random_value).hexdigest()
+
         return {
-            'password': '123',
+            'password': password,
             'username': username,
-            'firstName': 'learnqa',
+            'firstName': firstName,
             'lastName': 'learnqa',
             'email': email
         }
@@ -50,3 +57,11 @@ class BaseCase:
             assert name in response_as_dict, f'Response JSON doesnn\'t have key "{name}"'
 
             return response_as_dict[name]
+        
+    def invalid_email_generation():
+        base_part = 'learnqa'
+        domain = 'example.com'
+        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+        invalid_email = f'{base_part}{random_part}{domain}'
+
+        return invalid_email
