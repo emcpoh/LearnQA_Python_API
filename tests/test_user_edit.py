@@ -57,40 +57,40 @@ class TestUserEdit(BaseCase):
         Assertions.assert_content(response, '{"error":"Auth token not supplied"}')
 
 
-    def register_user(self):
-        try:
-            with allure.step('Register new user'):
-                register_data = self.prepare_registration_data()
+    # def register_user(self):
+    #     try:
+    #         with allure.step('Register new user'):
+    #             register_data = self.prepare_registration_data()
 
-                registration_response = MyRequests.post(MyRequests.user_registration_uri, data=register_data)
-                email = register_data['email']
-                password = register_data['password']
-                user_id = self.get_json_value(registration_response, 'id')
-        except Exception:
-            assert False, 'Some troubles in new user registration'
+    #             registration_response = MyRequests.post(MyRequests.user_registration_uri, data=register_data)
+    #             email = register_data['email']
+    #             password = register_data['password']
+    #             user_id = self.get_json_value(registration_response, 'id')
+    #     except Exception:
+    #         assert False, 'Some troubles in new user registration'
         
-        return email, password, user_id
+    #     return email, password, user_id
 
 
-    # вспомогательная функция для логина в качестве существующего пользователя
-    def login_as_user(self, email, password):
-        try:
-            login_data = {
-                'email': email,
-                'password': password
-            }
+    # # вспомогательная функция для логина в качестве существующего пользователя
+    # def login_as_user(self, email, password):
+    #     try:
+    #         login_data = {
+    #             'email': email,
+    #             'password': password
+    #         }
 
-            login_response = MyRequests.post(f'{MyRequests.user_login_uri}', data=login_data)
+    #         login_response = MyRequests.post(f'{MyRequests.user_login_uri}', data=login_data)
 
-            auth_sid = self.get_cookie(login_response, 'auth_sid')
-            token = self.get_header(login_response, 'x-csrf-token')
+    #         auth_sid = self.get_cookie(login_response, 'auth_sid')
+    #         token = self.get_header(login_response, 'x-csrf-token')
 
-            headers = {'x-csrf-token': token}
-            cookies = {'auth_sid': auth_sid}
-        except Exception:
-            assert False, 'Some troubles in user login process'
+    #         headers = {'x-csrf-token': token}
+    #         cookies = {'auth_sid': auth_sid}
+    #     except Exception:
+    #         assert False, 'Some troubles in user login process'
 
-        return headers, cookies
+    #     return headers, cookies
     
     @allure.description('This test tries to edit user being auth by different user')
     def test_user_edit_auth_diff_user(self):
