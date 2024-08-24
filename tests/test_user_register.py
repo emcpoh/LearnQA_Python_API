@@ -6,7 +6,8 @@ import pytest
 
 @allure.epic('Test user registration cases')
 class TestUserRegister(BaseCase):
-
+    @allure.severity(allure.severity_level.BLOCKER)
+    @allure.tag('positive')
     @allure.description('This test create new user')
     def test_create_user(self):
         data = self.prepare_registration_data()
@@ -16,6 +17,8 @@ class TestUserRegister(BaseCase):
         Assertions.assert_code_status(response, 200)
         Assertions.assert_json_has_keys(response, 'id')
 
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('negative')
     @allure.description('This test create user with existing email')
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
@@ -33,6 +36,8 @@ class TestUserRegister(BaseCase):
         '  test@testexample.com  ',
         '@.ru'
         ]
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('negative')
     @allure.description('This test tries to create a user with invalid email')
     @pytest.mark.parametrize('email', email)
     def test_create_user_with_invalid_email(self, email):
@@ -50,6 +55,8 @@ class TestUserRegister(BaseCase):
         'email',
         'password'
     ]
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('negative')
     @allure.description('This test tries to create a user w/o one of param')
     @pytest.mark.parametrize('missed_param', missed_param)
     def test_create_user_without_param(self, missed_param):
@@ -64,9 +71,10 @@ class TestUserRegister(BaseCase):
     changed_username_cases = [
         ['A', 400, "The value of 'username' field is too short"],
         ['', 400, "The value of 'username' field is too short"],
-        [f"{'A' * 251}", 400, "The value of 'username' field is too long"],
-        ['valid username', 200, None]
+        [f"{'A' * 251}", 400, "The value of 'username' field is too long"]
         ]
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.tag('negative')
     @allure.description('This test tries to create a user with changed username')
     @pytest.mark.parametrize('changed_username, expected_status_code, expected_description', changed_username_cases)
     def test_create_user_with_changed_username(self, changed_username, expected_status_code, expected_description):

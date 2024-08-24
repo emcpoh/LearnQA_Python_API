@@ -5,6 +5,8 @@ from lib.assertions import Assertions
 
 @allure.epic('Test user deletion cases')
 class TestUserDelete(BaseCase):
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('negative')
     @allure.description('This test tries to delete test user with id = 2')
     def test_delete_test_user(self):
         email = 'vinkotov@example.com'
@@ -20,7 +22,9 @@ class TestUserDelete(BaseCase):
         Assertions.assert_code_status(response, 400)
         Assertions.assert_json_value_by_name(response, 'error', 'Please, do not delete test users with ID 1, 2, 3, 4 or 5.',
                                              f'Unexpected response: {response.content}')
-        
+    
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('positive')
     @allure.description('This test delete a new user')
     def test_delete_new_user(self):
         with allure.step('Delete a new registered user'):
@@ -42,6 +46,8 @@ class TestUserDelete(BaseCase):
             Assertions.assert_code_status(response, 404)
             Assertions.assert_content(response, 'User not found')
 
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('negative')
     @allure.description('This test tries to delete user being auth as different user')
     def test_delete_user_auth_diff_user(self):
             with allure.step('First user registration and login'):

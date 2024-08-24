@@ -5,14 +5,17 @@ from lib.assertions import Assertions
 
 @allure.epic('Get user cases')
 class TestUserGet(BaseCase):
-
+    @allure.severity(allure.severity_level.BLOCKER)
+    @allure.tag('positive')
     @allure.description('This test get user details without auth')
     def test_get_user_details_no_auth(self):
         response = MyRequests.get(f'{MyRequests.user_registration_uri}/2') # Хардкодим user_id = 2 для существующего пользователя
         
         Assertions.assert_json_has_keys(response, 'username')
         Assertions.assert_json_has_no_keys(response, 'email', 'firstName', 'lastName')
-
+    
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('positive')
     @allure.description('This test get user details while being authorized as the same user')
     def test_get_user_details_auth_as_same_user(self):
         data = {
@@ -31,6 +34,8 @@ class TestUserGet(BaseCase):
         
         Assertions.assert_json_has_keys(auth_response, 'username', 'email', 'firstName', 'lastName')
 
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.tag('positive')
     @allure.description('This test tries to get user detail being authorized as different user')
     def test_get_user_details_auth_diff_user(self):
         data = {
